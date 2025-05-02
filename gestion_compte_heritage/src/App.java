@@ -31,7 +31,7 @@ public class App {
                   Transaction transac=Transaction.of(TypeTransaction.DEPOT,montant);
                    //Instanciation +  Hydration 
 
-                  compte.addTransaction(transac);
+                  compte.depot(transac);
                 break;
                 case SHOW_ALL_COMPTE:
                      CompteView.afficheCompte(CompteService.getComptes());
@@ -48,7 +48,13 @@ public class App {
                             //Saisie la Transaction
                               Transaction transaction=TransactionView.saisieTransaction();
                            //Ajouter la transaction au compte
-                           MessageTransaction result= compte.addTransaction(transaction);
+                           MessageTransaction result;
+                           if (transaction.getType()==TypeTransaction.DEPOT) {
+                               result= compte.depot(transaction);
+                           } else {
+                               result= compte.retrait(transaction);
+                           }
+                          
                            System.out.println(result.getMessage());
                       }else{
                         System.out.println("Aucun numero correspond a ce compte");

@@ -1,13 +1,12 @@
 package views;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+
 
 import entity.Compte;
 import services.CompteService;
 
-public class CompteView {
-       private static Scanner scanner=new Scanner(System.in);
+public class CompteView extends View {
        private CompteView(){
 
        }
@@ -19,13 +18,8 @@ public class CompteView {
              num=scanner.next();
         } while (CompteService.searchCompteByNum(num)!=null);
        
-        double solde;
-        do {
-              System.out.println("Entrer le solde du compte");
-              solde=scanner.nextDouble();
-        } while (solde<=0);
         compte.setNumero(num);
-        compte.setSolde(solde);
+        compte.setSolde(sasieDouble("\"Entrer le solde du compte\""));
         return compte;
 
     } 

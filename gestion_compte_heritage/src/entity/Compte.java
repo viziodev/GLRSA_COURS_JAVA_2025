@@ -8,28 +8,31 @@ import views.translate.fr.MessageTransaction;
 
 public class Compte {
     //Attributs d'instances
-    private int id; //0
-    private String numero;//null
-    private  LocalDate dateCreation=LocalDate.now();//null
-    private double  solde;//0.0
-    private  ArrayList<Transaction> transactions=new ArrayList<>();
+    protected int id; //0
+    protected String numero;//null
+    protected  LocalDate dateCreation=LocalDate.now();//null
+    protected double  solde;//0.0
+    protected  ArrayList<Transaction> transactions=new ArrayList<>();
+    protected TypeCompte type;
+
+  
 
     public  ArrayList<Transaction> getTransactions() {
         return transactions;
     }
 
-    public MessageTransaction addTransaction(Transaction transaction){
-        if (transaction.getType()==TypeTransaction.RETRAIT && transaction.getMontant()> solde) {
-              return MessageTransaction.RETRAIT_FAILED;  //Solde Insuffisant
-        }
-          transactions.add(transaction);
-         if ( transaction.getType()==TypeTransaction.RETRAIT ) {
-             solde-=transaction.getMontant();
-             return MessageTransaction.RETRAIT_SUCCES;
-         }
-            solde+=transaction.getMontant();  
-        return MessageTransaction.DEPOT_SUCCESS; 
+
+    public TypeCompte getType() {
+        return type;
     }
+    public  MessageTransaction retrait(Transaction transaction){
+        return null;
+    }
+
+    public  MessageTransaction depot(Transaction transaction){
+        return null;
+    }
+
 
     //Attributs 
     private static int nbreCompte;//0
@@ -82,7 +85,7 @@ public class Compte {
 
     @Override
     public String toString() {
-        return "Compte [id=" + id + ", numero=" + numero + ", dateCreation=" + FormatDate.toFr(dateCreation) + ", solde=" + solde + "]";
+        return " [id=" + id + ", numero=" + numero + ", dateCreation=" + FormatDate.toFr(dateCreation) + ", solde=" + solde + "]";
     }
 
 
