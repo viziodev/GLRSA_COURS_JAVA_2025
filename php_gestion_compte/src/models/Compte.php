@@ -1,6 +1,6 @@
 <?php 
 class Compte{
-       private static int $nbreCompte=0;
+    //  private static int $nbreCompte=0;
        private int $id;
        private string $numero;
        private DateTime $dateCreation;
@@ -9,11 +9,9 @@ class Compte{
       //PHP Constructeur par defaut ==>  __construct()
       public function __construct()
       {
-        self::$nbreCompte++;
-        $this->id=self::$nbreCompte;
-        $this->numero="NUM_". $this->id;
-        $this->dateCreation=new DateTime();
 
+        $this->numero=uniqid();
+        $this->dateCreation=new DateTime();
       }
 
      //Java ==>this.nomAttribut
@@ -88,5 +86,16 @@ class Compte{
        public function __toString()
        {
            return "ID :".$this->id."\n Numero :".$this->numero."\n Numero :".$this->dateCreation->format("d-m-Y")."\n Solde :".$this->solde."\n";
+       }
+
+       public static function of($row):Compte
+       {
+              //Convertir une ligne du cursor  == en compte
+              $compte=new Compte();
+              $compte->setId($row['id']);
+              $compte->setNumero($row['numero']);
+              $compte->setSolde($row['solde']);
+              $compte->setDateCreation(new DateTime($row['dateCreation']));
+              return $compte; 
        }
 }
