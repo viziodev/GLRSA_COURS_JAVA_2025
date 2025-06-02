@@ -1,6 +1,7 @@
 <?php
-require_once "./src/models/Compte.php";
-require_once "./src/repository/CompteRepository.php";
+require_once "../src/repository/CompteRepository.php";
+require_once "../src/models/Compte.php";
+
 class CompteService{
   private CompteRepository $compteRepository; 
 
@@ -16,12 +17,12 @@ class CompteService{
      /**
       * Get the value of comptes
       */
-     public function getComptes(): array
+     public function getComptes(string $titulaire): array
      {
-          return  $this->compteRepository->selectAll();
+          return  $this->compteRepository->selectAll($titulaire);
      }
 
-     public function searchCompteById(int $id): array|null
+     public function searchCompteById(int $id): Compte|null
      {
           return  $this->compteRepository->selectById($id);
      }

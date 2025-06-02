@@ -1,6 +1,6 @@
 <?php
-require_once "./src/models/Compte.php";
-require_once "./config/Database.php";
+require_once "../src/models/Compte.php";
+require_once "../config/Database.php";
 class CompteRepository {
     /*
          Methodes acces aux donnees ==> qui execute des Requetes Sql
@@ -20,7 +20,8 @@ class CompteRepository {
          $numero=$compte->getNumero();
          $dateCreation=$compte->getDateCreation()->format("Y-m-d");
          $solde=$compte->getSolde();
-         $sql="INSERT INTO `compte` (`numero`,`dateCreation`, `solde`) VALUES ('$numero', '$dateCreation', $solde)";
+         $titulaire=$compte->getTitulaire();
+         $sql="INSERT INTO `compte` (`numero`,`dateCreation`, `solde`, `titulaire`) VALUES ('$numero', '$dateCreation', $solde,'$titulaire')";
           return Database::getPdo()->exec($sql);
         } catch (\PDOException $ex) {
            print $ex->getMessage()."\n";
@@ -29,9 +30,13 @@ class CompteRepository {
        return 0;
     }
 
-    public function selectAll():array{
+    public function selectAll(string $titulaire,int $offset=0,int $size=5):array{
      try {
-      $sql="select * from compte ";//Plusieurs Comptes
+      $where="";
+      if($titulaire!=""){
+         $where="where titulaire like  '%$titulaire%'";
+      }
+      $sql="select * from compte $where Limit $offset,$size";//Plusieurs Comptes
       $cursor=Database::getPdo()->query( $sql);
       $comptes=[];
       while ($row=$cursor->fetch()) {
@@ -49,8 +54,9 @@ class CompteRepository {
       try {
         $sql="select * from compte where id=$id ";//Plusieurs Comptes
           $cursor= Database::getPdo()->query( $sql);
-             $row=$cursor->fetch();
-             return Compte::of($row);
+             if($row=$cursor->fetch()){
+               return Compte::of($row);
+             }
         } catch (\PDOException $ex) {
            print $ex->getMessage()."\n";
         }  

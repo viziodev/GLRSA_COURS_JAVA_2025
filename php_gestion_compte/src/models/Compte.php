@@ -5,14 +5,22 @@ class Compte{
        private string $numero;
        private DateTime $dateCreation;
        private string $solde;
+       private string $titulaire;
 
       //PHP Constructeur par defaut ==>  __construct()
-      public function __construct()
+      public function __construct(string $titulaire="",string $solde="0")
       {
-
         $this->numero=uniqid();
         $this->dateCreation=new DateTime();
+        $this->solde=$solde;
+         $this->titulaire=$titulaire;
       }
+
+      public function getDateToString():string{
+         return  $this->dateCreation->format("d-m-Y");
+      }
+
+
 
      //Java ==>this.nomAttribut
         //PHP ==>$this->nomAttribut  ==> Obligatoire sur les attributs
@@ -95,7 +103,26 @@ class Compte{
               $compte->setId($row['id']);
               $compte->setNumero($row['numero']);
               $compte->setSolde($row['solde']);
+              $compte->setTitulaire($row['titulaire']);
               $compte->setDateCreation(new DateTime($row['dateCreation']));
               return $compte; 
+       }
+
+       /**
+        * Get the value of titulaire
+        */
+       public function getTitulaire(): string
+       {
+              return $this->titulaire;
+       }
+
+       /**
+        * Set the value of titulaire
+        */
+       public function setTitulaire(string $titulaire): self
+       {
+              $this->titulaire = $titulaire;
+
+              return $this;
        }
 }
