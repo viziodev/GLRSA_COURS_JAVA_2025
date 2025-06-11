@@ -1,21 +1,23 @@
 <?php 
+require_once "../config/Controller.php";
 require_once "../src/services/CompteService.php";
 require_once "../src/services/TransactionService.php";
 require_once "../src/models/Compte.php";
 require_once "../src/models/Transaction.php";
-class TransactionController{
+class TransactionController extends Controller{
 
     private CompteService $compteService;
     private TransactionService $transactionService;
     public function __construct()
     {
+        parent::__construct();
         $this->compteService=new CompteService() ;
         $this->transactionService=new TransactionService() ;
         $this->handleRequest();
     }
 
 
-    private function handleRequest(){
+    protected function handleRequest(){
       $action=$_REQUEST["action"]??'list-transaction';//form-compte
        switch ($action) {
         case 'list-transaction':
@@ -53,9 +55,11 @@ class TransactionController{
         }
         $transactions=$this->transactionService->getTransactions($compteId);
         $statistiques=$this->transactionService->getStatistiques($compteId);
-        require_once "../views/layout/header.html.php";
-        require_once "../views/transaction/liste.html.php";
-        require_once "../views/layout/footer.html.php";
+        $this->render("transaction/liste.html.php",[
+          "compte"=>$compte,
+          "transactions"=> $transactions,
+          "statistiques"=> $statistiques,
+        ]);
       }
   
 
@@ -66,16 +70,17 @@ class TransactionController{
           header("location:index.php?controller=compte&action=list-compte");
           exit;
         }
-        require_once "../views/layout/header.html.php";
-        require_once "../views/transaction/form.html.php";
-        require_once "../views/layout/footer.html.php";
+         $this->render("transaction/form.html.php",[
+          "compte"=>$compte,
+         ]);
     }
 
     public function saveTransaction(){
         //1-Recevoir la Request Http (Donne provenant de vue) 
-         $montant =$_REQUEST["montant"];
-         $type =$_REQUEST["type"];
-         $compteId =$_REQUEST["compteId"];
+         //$montant =$_REQUEST["montant"];
+        // $type =$_REQUEST["type"];
+        // $compteId =$_REQUEST["compteId"];
+         extract($_REQUEST);
          $transaction=new Transaction( $compteId, $montant , $type);
          $this->transactionService->addTransaction($transaction);
         //4-Faire une redirection vers une action du controller

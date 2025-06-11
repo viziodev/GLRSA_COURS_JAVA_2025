@@ -17,9 +17,9 @@ class CompteService{
      /**
       * Get the value of comptes
       */
-     public function getComptes(string $titulaire): array
+     public function getComptes(int|null $clientId,string $titulaire): array
      {
-          return  $this->compteRepository->selectAll($titulaire);
+          return  $this->compteRepository->selectAll($clientId,$titulaire);
      }
 
      public function searchCompteById(int $id): Compte|null

@@ -23,6 +23,7 @@
                    </form> 
            </div>
              <div class="container shadow p-3 mb-5 bg-body rounded">
+                    <?php if ($_SESSION['user']['role']=="ADMIN"):?> 
                            <div class="d-flex  justify-content-end  my-2">
                             <a
                                 name=""
@@ -33,6 +34,7 @@
                                 >Nouveau</a
                             >
                            </div>
+                      <?php endif ?>
                            
                           <div
                             class="table-responsive"

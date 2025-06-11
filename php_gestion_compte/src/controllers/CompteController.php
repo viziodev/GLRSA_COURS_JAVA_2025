@@ -1,16 +1,20 @@
 <?php
+require_once "../config/Controller.php";
 require_once "../src/services/CompteService.php";
+require_once "../src/services/UserService.php";
 require_once "../src/models/Compte.php";
-class CompteController{
+class CompteController extends Controller{
     private CompteService $compteService;
+    private UserService $userService;
     public function __construct()
     {
+        parent::__construct();
         $this->compteService=new CompteService() ;
+        $this->userService=new UserService() ;
         $this->handleRequest();
     }
 
-
-    private function handleRequest(){
+    protected function handleRequest(){
        $action=$_REQUEST["action"]??'list-compte';//form-compte
        switch ($action) {
         case 'form-compte':
@@ -29,36 +33,44 @@ class CompteController{
 
     }
     public function showListCompte(){
-
       $titulaire =$_REQUEST["titulaire"]??"";
+      $clientId=$_SESSION['user']['role']=="CLIENT"?$_SESSION['user']['id']:null;
       //2-Recuperer/envoyer des donnees du Service(facultatif)
-      $comptes=$this->compteService->getComptes($titulaire);
+       $comptes=$this->compteService->getComptes($clientId,$titulaire);
       //3-Produire une Response Http(vues en html , css,js)
-      require_once "../views/layout/header.html.php";
-      require_once "../views/compte/liste.html.php";
-      require_once "../views/layout/footer.html.php";
+        $this->render("compte/liste.html.php",[
+          'comptes'=>$comptes
+        ]);
     }
 
-    public function showFormCompte(){
-          require_once "../views/layout/header.html.php";
-          require_once "../views/compte/form.html.php";
-        require_once "../views/layout/footer.html.php";
+      public function showFormCompte(){
+           $clients= $this->userService->getAllClients();
+           $this->render("compte/form.html.php",[
+            "clients"=>$clients
+           ]);
       }
 
       public function saveCompte(){
              //1-Recevoir la Request Http (Donne provenant de vue) 
-              $solde =$_REQUEST["solde"];
-              $titulaire =$_REQUEST["titulaire"];
+                 //Methode 1 
+                   //$solde =$_REQUEST["solde"];
+                  // $titulaire =$_REQUEST["titulaire"];
+                //Methode 2 ==>Extract
+                   extract($_REQUEST);
              //2-Validation de Donnees 
-                /* $compte =new Compte();
-                   $compte->setSolde($solde);
-                   $compte->setTitulaire($titulaire);
-                */
-
-              $compte =new Compte($titulaire ,$solde);
-            //3-envoyer des donnees du Service(facultatif)
-               $this->compteService->addCompte($compte);
-             //4-Faire une redirection vers une action du controller
-              header("location:index.php?controller=compte&action=list-compte");
+               $this->validator->isEmpty("solde",$solde,"Solde est obligatoire ");
+               $this->validator->isEmail("titulaire",$titulaire,"Titulaire est obligatoire ");
+              if($this->validator->isValid()){
+                 $compte =new Compte($titulaire ,$solde);
+                  //3-envoyer des donnees du Service(facultatif)
+                  $this->compteService->addCompte($compte);
+                   //4-Faire une redirection vers une action du controller
+                  header("location:index.php?controller=compte&action=list-compte");
+             }else{
+                 $_SESSION['errors']=$this->validator->getErrors();
+                 header("location:index.php?controller=compte&action=form-compte");
+             }
+            
+           
       }
 }

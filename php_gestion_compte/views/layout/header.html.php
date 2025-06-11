@@ -34,6 +34,19 @@
                                   
                               </div>
                           </div>
+                          <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> <?php echo   $_SESSION['user']['nomComplet'];?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><?php echo $_SESSION['user']['role'];?></a></li>
+                            <li><a class="dropdown-item" href="#">Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.php?controller=user&action=logout">Déconnexion</a></li>
+                        </ul>
+                
+               
                       </div>
                   </nav>
 </header>

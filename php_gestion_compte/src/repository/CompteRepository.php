@@ -21,22 +21,24 @@ class CompteRepository {
          $dateCreation=$compte->getDateCreation()->format("Y-m-d");
          $solde=$compte->getSolde();
          $titulaire=$compte->getTitulaire();
-         $sql="INSERT INTO `compte` (`numero`,`dateCreation`, `solde`, `titulaire`) VALUES ('$numero', '$dateCreation', $solde,'$titulaire')";
+         $sql="INSERT INTO `compte`(`numero`,`dateCreation`, `solde`, `client_id`) VALUES ('$numero', '$dateCreation', $solde,$titulaire)";
           return Database::getPdo()->exec($sql);
         } catch (\PDOException $ex) {
            print $ex->getMessage()."\n";
         }  
-          
        return 0;
     }
 
-    public function selectAll(string $titulaire,int $offset=0,int $size=5):array{
+    public function selectAll(int|null $clientId,string $titulaire,int $offset=0,int $size=5):array{
      try {
-      $where="";
-      if($titulaire!=""){
-         $where="where titulaire like  '%$titulaire%'";
-      }
-      $sql="select * from compte $where Limit $offset,$size";//Plusieurs Comptes
+       $where="where  c.client_id=u.id  ";
+       if ($clientId!=null) {
+           $where.="and client_id=$clientId";
+       }
+       if($titulaire!=""){
+         $where.="and titulaire like  '%$titulaire%'";
+       }
+      $sql="select c.*,u.nomComplet as titulaire FROM `compte` c, user u $where Limit $offset,$size";//Plusieurs Comptes
       $cursor=Database::getPdo()->query( $sql);
       $comptes=[];
       while ($row=$cursor->fetch()) {
@@ -52,7 +54,7 @@ class CompteRepository {
 
     public function selectById(int $id):Compte|null{
       try {
-        $sql="select * from compte where id=$id ";//Plusieurs Comptes
+        $sql="select c.*,u.nomComplet as titulaire FROM `compte` c, user u WHERE c.client_id=u.id and c.id=$id";//Plusieurs Comptes
           $cursor= Database::getPdo()->query( $sql);
              if($row=$cursor->fetch()){
                return Compte::of($row);
